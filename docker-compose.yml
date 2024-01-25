@@ -1,0 +1,572 @@
+version: "3"
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "5k"
+    max-file: "5"
+networks:
+  lan:
+    external: true
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8181:8080"
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--accesslog=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.csr.acme.tlschallenge=true"
+      - "--certificatesresolvers.csr.acme.email=me@myemail.com" # Change to your email
+      - "--certificatesresolvers.csr.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - /home/pi/docker/traefik/letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      # Internal routing
+      - "traefik.http.routers.api.rule=Host(`traefik.home.local`)"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.middlewares=basic-auth-global"
+      # Public internet routing, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.api-public.rule=Host(`traefik.my.domain`)"
+      - "traefik.http.routers.api-public.service=api@internal"
+      - "traefik.http.routers.api-public.tls=true"
+      - "traefik.http.routers.api-public.entrypoints=websecure"
+      - "traefik.http.routers.api-public.tls.certresolver=csr"
+      - "traefik.http.routers.api-public.middlewares=basic-auth-global"
+      # Basic auth for Traefik dashboard
+      - "traefik.http.middlewares.basic-auth-global.basicauth.users=admin:myhtpasswd" # Generate a htpasswd hashed password
+    logging: *default-logging
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "2780:80"
+    volumes:
+      - /home/pi/docker/heimdall:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.heimdall.loadBalancer.server.port=80"
+      # Internal route with Traefik certificate
+      - "traefik.http.routers.heimdall.rule=Host(`apps.home.local`)"
+      - "traefik.http.routers.heimdall.tls=true"
+      - "traefik.http.routers.heimdall.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.heimdall-public.rule=Host(`apps.my.domain`)"
+      - "traefik.http.routers.heimdall-public.tls=true"
+      - "traefik.http.routers.heimdall-public.entrypoints=websecure"
+      - "traefik.http.routers.heimdall-public.tls.certresolver=csr"
+  cloudflare-ddns:
+    image: timothyjmiller/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    network_mode: host # No ports are exposed, but it has to use host networking to get public IP
+    env_file:
+      - env-general.env
+    volumes:
+      - /home/pi/docker/cloudflare-ddns/config.json:/config.json # Check Cloudflare documentation how to create a custom config.json
+    logging: *default-logging
+  no-ip2:
+    image: romeupalos/noip:alpine3.16.2-2.1.9-1-arm64v8
+    container_name: no-ip2 # No ports are exposed, but it has to use host networking to get public IP
+    network_mode: host
+    env_file:
+      - env-general.env
+    volumes:
+      - /home/pi/docker/no-ip2/no-ip2.conf:/usr/local/etc/no-ip2.conf # Check no-ip2 documentation how to create a custom no-ip2.conf
+    logging: *default-logging
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    networks:
+      - lan
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "2680:80"
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+    env_file:
+      - env-general.env
+      - env-pihole.env
+    volumes:
+      - /home/pi/docker/pihole:/etc/pihole
+      - /home/pi/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pihole.loadBalancer.server.port=80"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.pihole.rule=Host(`pihole.home.local`)"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.pihole-public.rule=Host(`pihole.my.domain`)"
+      - "traefik.http.routers.pihole-public.tls=true"
+      - "traefik.http.routers.pihole-public.entrypoints=websecure"
+      - "traefik.http.routers.pihole-public.tls.certresolver=csr"
+      - "traefik.http.middlewares.pihole.addprefix.prefix=/admin"
+    logging: *default-logging
+  mongodb-unifi:
+    container_name: mongodb-unifi
+    image: mongo:4.1
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "27018:27017"
+    volumes:
+      - /home/pi/docker/mongodb/unifi:/data/db
+      - /home/pi/docker/mongodb/unifi/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro # Check Unifi documentation if you need custom database init, Unifi setup is provided in my repo
+    logging: *default-logging
+  unifi:
+    container_name: unifi
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    depends_on:
+      - mongodb
+    env_file:
+      - env-general.env
+      - env-unifi.env
+    networks:
+      - lan
+    ports: # Do not change any port mappings as Unifi devices are using if for adoption process
+      - "8443:8443"
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "8080:8080"
+      #- "1900:1900/udp" # UPnP port, used by MiniDLNA. Enable it to have an option for direct connection. If you need Unifi Cloud connection aditional 443/TCP is required.
+      - "8843:8843"
+      - "8880:8880"
+      - "6789:6789"
+      - "5514:5514/udp"
+    volumes:
+      - /home/pi/docker/unifi/config:/config
+      - /home/pi/docker/unifi/log:/usr/lib/unifi/logs
+      - /home/pi/docker/unifi/log2:/var/log/unifi
+      - /home/pi/docker/unifi/run:/usr/lib/unifi/run
+      - /home/pi/docker/unifi/run2:/run/unifi
+      - /home/pi/docker/unifi/work:/usr/lib/unifi/work
+      - /home/pi/docker/unifi/cert:/unifi/cert
+    labels:
+      - "traefik.enable=false"
+      # Unifi controller does not like reverse proxies. It can be done but it requires aditional knowledge and effort. I got it running but I can't explain the whole configuration so it's not yet here.
+    logging: *default-logging
+  minidlna:
+    container_name: minidlna
+    image: vladgh/minidlna:latest
+    env_file:
+      - env-general.env
+      - env-minidlna.env
+    network_mode: 'host'
+    volumes:
+      - /mnt/usb/downloads/movies:/movies:z
+      - /mnt/usb/downloads/series:/series:z
+    logging: *default-logging
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    env_file:
+      - env-general.env
+      - env-transmission.env
+    volumes:
+      - /home/pi/docker/transmission/config:/config
+      - /home/pi/docker/transmission/ui/tranmissionic:/ui # Be sure to download and unpack Transmissionic UI to this location
+      - /mnt/usb/downloads:/downloads:z
+      - /mnt/usb/watch:/watch
+      - /mnt/usb/incomplete:/incomplete
+    networks:
+      - lan
+    ports:
+      - "9091:9091"
+      - "51413:51413"
+      - "51413:51413/udp"
+      - "61833:61833" # Make sure it is the same as PEERPORT environment variable value
+      - "61833:61833/udp" # Make sure it is the same as PEERPORT environment variable value
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.transmission.loadBalancer.server.port=9091"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.transmission.rule=Host(`transmission.home.local`)"
+      - "traefik.http.routers.transmission.tls=true"
+      - "traefik.http.routers.transmission.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.transmission-public.rule=Host(`transmission.my.domain`)"
+      - "traefik.http.routers.transmission-public.tls=true"
+      - "traefik.http.routers.transmission-public.entrypoints=websecure"
+      - "traefik.http.routers.transmission-public.tls.certresolver=csr"
+    logging: *default-logging
+  mariadb-nextcloud:
+    image: mariadb:latest
+    container_name: mariadb-nextcloud
+    env_file:
+      - env-general.env
+      - env-mariadb-nextcloud.env
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    networks:
+      - lan
+    ports:
+      - "3306:3306"
+    volumes:
+      - /home/pi/docker/mysql/nextcloud:/var/lib/mysql
+    logging: *default-logging
+  redis-nextcloud:
+    container_name: redis-nextcloud
+    image: redis:latest
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - /home/pi/docker/redis/nextcloud:/data
+    logging: *default-logging
+  nextcloud:
+    container_name: nextcloud
+    image: nextcloud:latest
+    depends_on:
+      - mariadb-nextcloud
+      - redis-nextcloud
+    env_file:
+      - env-general.env
+      - env-nextcloud.env
+    networks:
+      - lan
+    ports:
+      - "2683:80"
+    volumes:
+      - /home/pi/docker/nextcloud:/var/www/html
+      - /mnt/usb/nextcloud:/var/www/html/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.nextcloud.loadBalancer.server.port=80"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.nextcloud.rule=Host(`files.home.local`)"
+      - "traefik.http.routers.nextcloud.tls=true"
+      - "traefik.http.routers.nextcloud.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud-public.rule=Host(`files.my.domain`)"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.nextcloud-public.tls=true"
+      - "traefik.http.routers.nextcloud-public.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud-public.tls.certresolver=csr"
+      # PHP is touchy-feelly with aditional domain, be sure to check how to add "trusted_domains" to config.php (Google PHP occ trusted domains docker example)
+    logging: *default-logging
+  samba:
+    container_name: samba
+    image: dperson/samba:latest
+    env_file:
+      - env-general.env
+      - env-samba.env
+    networks:
+      - lan
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+    tmpfs:
+      - /tmp
+    stdin_open: true
+    tty: true
+    volumes:
+      - /mnt/usb/downloads:/downloads:z
+      - /mnt/usb/downloads/movies:/movies:z
+      - /mnt/usb/downloads/series:/series:z
+      - /mnt/usb/downloads/books:/books:z
+      - /mnt/usb/downloads/audiobooks:/audiobooks:z
+    command: '-s "Movies;/movies;yes;no;yes;all;pi;pi" -s "Series;/series;yes;no;yes;all;pi;pi" -s "Books;/books;yes;no;yes;all;pi;pi" -s "Audiobooks;/audiobooks;yes;no;yes;all;pi;pi" -s "Downloads;/downloads;yes;no;yes;all;pi;pi" -p'
+    logging: *default-logging
+  ftps:
+    container_name: ftps
+    image: chonjay21/ftps:latest
+    env_file:
+      - env-general.env
+      - env-ftps.env
+    networks:
+      - lan
+    ports:
+      - "2621:21"
+      - "60000-60010:60000-60010"
+    volumes:
+      - /mnt/usb/downloads/movies:/home/vsftpd/data/movies:z
+      - /mnt/usb/downloads/series:/home/vsftpd/data/series:z
+      - /mnt/usb/downloads/books:/home/vsftpd/data/books:z
+      - /mnt/usb/downloads/audiobooks:/home/vsftpd/data/audiobooks:z
+      - /mnt/usb/downloads:/home/vsftpd/data/downloads:z
+      - /mnt/usb/backup:/home/vsftpd/data/backup
+    logging: *default-logging
+  calibre-web:
+    container_name: calibre-web
+    image: lscr.io/linuxserver/calibre-web:latest
+    env_file:
+      - env-general.env
+      - env-calibre-web.env
+    networks:
+      - lan
+    ports:
+      - "8083:8083"
+    volumes:
+      - /home/pi/docker/calibre-web:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.calibre-web.loadBalancer.server.port=8083"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.calibre-web.rule=Host(`calibre-web.home.local`)"
+      - "traefik.http.routers.calibre-web.tls=true"
+      - "traefik.http.routers.calibre-web.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.calibre-web-public.rule=Host(`calibre-web.my.domain`)"
+      - "traefik.http.routers.calibre-web-public.tls=true"
+      - "traefik.http.routers.calibre-web-public.entrypoints=websecure"
+      - "traefik.http.routers.calibre-web-public.tls.certresolver=csr"
+    logging: *default-logging
+  calibre:
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre
+    env_file:
+      - env-general.env
+      - env-calibre.env
+    networks:
+      - lan
+    ports:
+      - 2688:2688 # Set to CUSTOM_PORT value
+      - 2689:2689 # Set to CUSTOM_HTTPS_PORT value
+      - 8081:8081
+    volumes:
+      - /home/pi/docker/calibre:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.calibre.loadBalancer.server.port=2688"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.calibre.rule=Host(`calibre.home.local`)"
+      - "traefik.http.routers.calibre.tls=true"
+      - "traefik.http.routers.calibre.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.calibre-public.rule=Host(`calibre.my.domain`)"
+      - "traefik.http.routers.calibre-public.tls=true"
+      - "traefik.http.routers.calibre-public.entrypoints=websecure"
+      - "traefik.http.routers.calibre-public.tls.certresolver=csr"
+    logging: *default-logging
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: lazylibrarian
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env-general.env
+    networks:
+       - lan
+    ports:
+      - "5299:5299"
+    volumes:
+      - /home/pi/docker/lazylibrarian:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      # Internal routing with Traefik 
+      - "traefik.http.routers.ll.rule=Host(`ll.home.local`)"
+      - "traefik.http.routers.ll.tls=true"
+      - "traefik.http.routers.ll.entrypoints=websecure"
+      - "traefik.http.services.ll.loadBalancer.server.port=5299"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.ll-public.rule=Host(`ll.my.domain`)"
+      - "traefik.http.routers.ll-public.tls=true"
+      - "traefik.http.routers.ll-public.entrypoints=websecure"
+      - "traefik.http.routers.ll-public.tls.certresolver=csr"
+    logging: *default-logging
+  readarr:
+    image: lscr.io/linuxserver/readarr:nightly
+    container_name: readarr
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "8787:8787"
+    volumes:
+      - /home/pi/docker/readarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.readarr.loadBalancer.server.port=8787"
+      # Internal routing with Traefik cerificate
+      - "traefik.http.routers.readarr.rule=Host(`books.home.local`)"
+      - "traefik.http.routers.readarr.tls=true"
+      - "traefik.http.routers.readarr.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.readarr-public.rule=Host(`books.my.domain`)"
+      - "traefik.http.routers.readarr-public.tls=true"
+      - "traefik.http.routers.readarr-public.entrypoints=websecure"
+      - "traefik.http.routers.readarr-public.tls.certresolver=csr"
+    logging: *default-logging
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "7878:7878"
+    volumes:
+      - /home/pi/docker/radarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.radarr.loadBalancer.server.port=7878"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.radarr.rule=Host(`movies.home.local`)"
+      - "traefik.http.routers.radarr.tls=true"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.radarr-public.rule=Host(`movies.my.domain`)"
+      - "traefik.http.routers.radarr-public.tls=true"
+      - "traefik.http.routers.radarr-public.entrypoints=websecure"
+      - "traefik.http.routers.radarr-public.tls.certresolver=csr"
+    logging: *default-logging
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "8989:8989"
+    volumes:
+      - /home/pi/docker/sonarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.sonarr.loadBalancer.server.port=8989"
+      # Internal routign with Traefik certificate
+      - "traefik.http.routers.sonarr.rule=Host(`series.home.local`)"
+      - "traefik.http.routers.sonarr.tls=true"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.sonarr-public.rule=Host(`series.my.domain`)"
+      - "traefik.http.routers.sonarr-public.tls=true"
+      - "traefik.http.routers.sonarr-public.entrypoints=websecure"
+      - "traefik.http.routers.sonarr-public.tls.certresolver=csr"
+    logging: *default-logging
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "9696:9696"
+    volumes:
+      - /home/pi/docker/prowlarr:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.prowlarr.loadBalancer.server.port=9696"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.prowlarr.rule=Host(`indexers.home.local`)"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.prowlarr-public.rule=Host(`indexers.my.domain`)"
+      - "traefik.http.routers.prowlarr-public.tls=true"
+      - "traefik.http.routers.prowlarr-public.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr-public.tls.certresolver=csr"
+    logging: *default-logging
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    env_file:
+      - env-general.env
+    networks:
+      - lan
+    ports:
+      - "6767:6767"
+    volumes:
+      - /home/pi/docker/bazarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.bazarr.loadBalancer.server.port=6767"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.bazarr.rule=Host(`subtitles.home.local`)"
+      - "traefik.http.routers.bazarr.tls=true"
+      - "traefik.http.routers.bazarr.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.bazarr-public.rule=Host(`subtitles.my.domain`)"
+      - "traefik.http.routers.bazarr-public.tls=true"
+      - "traefik.http.routers.bazarr-public.entrypoints=websecure"
+      - "traefik.http.routers.bazarr-public.tls.certresolver=csr"
+    logging: *default-logging
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    env_file:
+      - env-general.env
+      - env-plex.env
+    networks:
+      - lan
+    ports:
+      - "2696:9696"
+      - "32400:32400"
+      #- "1900:1900/udp" # UPnP port, enable this or unifi or minidlna
+      #- "5353:5353/udp" # UPnP port, enable this or unifi or minidlna
+      - "8324:8324"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+      - "32469:32469"
+    volumes:
+      - /home/pi/docker/plex:/config
+      - /mnt/usb/downloads/series:/series:z
+      - /mnt/usb/downloads/movies:/movies:z
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.plex.loadBalancer.server.port=32400"
+      # Internal routing with Traefik certificate
+      - "traefik.http.routers.plex.rule=Host(`plex.home.local`)"
+      - "traefik.http.routers.plex.tls=true"
+      - "traefik.http.routers.plex.entrypoints=websecure"
+      # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+      - "traefik.http.routers.plex-public.rule=Host(`plex.my.domain`)"
+      - "traefik.http.routers.plex-public.tls=true"
+      - "traefik.http.routers.plex-public.entrypoints=websecure"
+      - "traefik.http.routers.plex-public.tls.certresolver=csr"
+    logging: *default-logging

@@ -1,0 +1,24 @@
+{
+  "cloudflare": [
+    {
+      "authentication": {
+        "api_token": "my-Api-Token",
+        "api_key": {
+          "api_key": "my-Api-Key",
+          "account_email": "me@email.com"
+        }
+      },
+      "zone_id": "zoneId-In-Which-You-Want-To-Update-Records",
+      "subdomains": [
+        {
+          "name": "subdomain-to-update",
+          "proxied": false
+        }
+      ]
+    }
+  ],
+  "a": true,
+  "aaaa": false,
+  "purgeUnknownRecords": false,
+  "ttl": 300
+}
