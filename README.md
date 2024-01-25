@@ -55,9 +55,13 @@ This is my script to update RPi and also all containers. You'll notice I am usin
 # What's next
 ## Traefik labels
 A good portion of docker-compose.yaml is used by labels required for Traefik. I plan to move that to dedicated YAML files out of docker-compose.yaml.
+## Traefik TCP and UDP
+Currently Traefik only handles HTTP/S traffic. I plan to move all traffic (TCP and UDP) to Traefik.
 ## Home Assistant
 I am looking into home automation for some time now. That might be next.
 ## raspotify
 raspotify is not in docker container. raspotify is is Spotify Connect client. It requires low level access to HDMI port. Currently it's installed on my RPi. Some had success running it in container but I haven't yet got to that.
 ## Kubernetes
 I might move this whole project to K0s or K3s. But that will be a new git repo.
+## build-my-pi.sh
+Something I am working on. This bash script is meant to build RPi from scratch to full operating mode. I do not have a spare RPi 4 to test it and don't feel like building everyting from scratch :)
