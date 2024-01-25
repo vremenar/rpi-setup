@@ -57,6 +57,12 @@ This is my script to update RPi and also all containers. You'll notice I am usin
 A good portion of docker-compose.yaml is used by labels required for Traefik. I plan to move that to dedicated YAML files out of docker-compose.yaml.
 ## Traefik TCP and UDP
 Currently Traefik only handles HTTP/S traffic. I plan to move all traffic (TCP and UDP) to Traefik.
+## Traefik health checks
+I have started to play around with traefik service health checks. I'll add that soon
+## Container health checks
+Some of the container have a health checks included but not all of them. That I plan to add so they can revover and alert me when they fail
+## Prometheus, alertmanager, Grafana
+I would love to have a dashboard for monitoring all of the services and RPi. Also to have alertign when something goes wrong. So most likely this will follow soon.
 ## Home Assistant
 I am looking into home automation for some time now. That might be next.
 ## raspotify
