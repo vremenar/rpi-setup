@@ -1,0 +1,28 @@
+http:
+  routers:
+    transmission-web:
+      service: transmission-web
+      rule: "Host(`transmission.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    transmission-web-public:
+      service: transmission-web
+      rule: "Host(`transmission.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    transmission-web:
+      loadBalancer:
+        servers:
+          - url: "http://transmission:9091"
+#        healthcheck:
+#          path: "/transmission/web"
+#          port: "9091"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

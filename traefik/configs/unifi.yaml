@@ -1,0 +1,37 @@
+# Unifi controller does not like reverse proxies. It can be done but it requires aditional knowledge and effort. I got it running but I can't explain the whole configuration so it's not yet here.
+#http:
+#  routers:
+#    unifi:
+#      service: unifi-web-interface
+#      rule: "Host(`unifi.home.local`)"
+#      tls: {}
+#      entryPoints:
+#        - "websecure"
+#      middlewares:
+#        - "unifi-dashboard"
+#    unifi-public:
+#      service: unifi-web-interface
+#      rule: "Host(`unifi.my.domain`)"
+#      tls: 
+#        certresolver: csr
+#      entryPoints:
+#        - "websecure"
+#      middlewares:
+#        - "unifi-dashboard"
+#
+#  middlewares:
+#    unifi-dashboard:
+#      addprefix:
+#        prefix: "/manage/default/dashboard"
+#
+#  services:
+#    unifi-web-interface:
+#      loadBalancer:
+#        servers:
+#          - url: "https://unifi:8443"
+#        healthcheck:
+#          path: "/status"
+#          port: "8443"
+#          scheme: "https"
+#          interval: "3s"
+#          timeout: "100ms"

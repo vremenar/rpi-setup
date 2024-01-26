@@ -1,0 +1,36 @@
+http:
+  routers:
+    pihole:
+      service: pihole-web-interface
+      rule: "Host(`pihole.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+      middlewares:
+        - "pihole-admin"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    pihole-public:
+      service: pihole-web-interface
+      rule: "Host(`pihole.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+      middlewares:
+        - "pihole-admin"
+
+  middlewares:
+    pihole-admin:
+      addprefix:
+        prefix: "/admin"
+
+  services:
+    pihole-web-interface:
+      loadBalancer:
+        servers:
+          - url: "http://pihole:80"
+        healthcheck:
+          path: "/admin"
+          interval: "3s"
+          timeout: "100ms"
+          scheme: "http"

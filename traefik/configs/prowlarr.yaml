@@ -1,0 +1,28 @@
+http:
+  routers:
+    prowlarr:
+      service: prowlarr
+      rule: "Host(`indexers.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    prowlarr-public:
+      service: prowlarr
+      rule: "Host(`indexers.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    prowlarr:
+      loadBalancer:
+        servers:
+          - url: "http://prowlarr:9696"
+#        healthcheck:
+#          path: "/health"
+#          port: "9696"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

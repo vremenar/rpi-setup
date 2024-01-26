@@ -1,0 +1,27 @@
+http:
+  routers:
+    traefik:
+      service: api@internal
+      rule: "Host(`traefik.home.local`)"
+      tls: {}
+      middlewares: 
+        - "basic-auth-global"
+      entryPoints:
+        - "websecure"
+    # Public internet routing, delete this is you do not have or want access from public internet
+    traefik-public:
+      service: api@internal
+      rule: "Host(`traefik.my.domain`)"
+      tls:
+        certresolver: csr
+      middlewares: 
+        - "basic-auth-global"
+      entryPoints:
+        - "websecure"
+
+  middlewares:
+    basic-auth-global:
+      basicAuth:
+        users:
+          - "admin:My-Strong-Hashed-Password"
+          # generate a password in cmd: echo $(htpasswd -nm admin)

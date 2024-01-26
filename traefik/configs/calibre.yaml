@@ -1,0 +1,28 @@
+http:
+  routers:
+    calibre:
+      service: calibre
+      rule: "Host(`calibre.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    calibre-public:
+      service: calibre
+      rule: "Host(`calibre.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    calibre:
+      loadBalancer:
+        servers:
+          - url: "http://calibre:2688"
+#        healthcheck:
+#          path: "/health"
+#          port: "2688"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

@@ -1,7 +1,7 @@
 # My RPi setup
 This is my learning project and something I do when I get all nostalgic about technology. It gives me something technical to work on and to continuosly develop my knowledge.
 
-It is a project do run in containers my full home system. From ad-blocking (Pihole) to digital book library. To run it you'll need Raspberry 4 or 5. Anything older will not work as Mongo 4.1 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more. 
+It is a project to run in containers my full home system. From ad-blocking (Pihole) to digital book library. To run it you'll need Raspberry 4 or 5. Anything older will not work as Mongo 4.1 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more. 
 
 Setup of applications mentioned here is out of the scope. Google them. Behind every application there is a large and vibrant community willing to help. And documentation is extensive. 
 
@@ -14,6 +14,8 @@ I hate accesing applications with dedicated ports. Traefik handles that. It prox
 You'll notice that all neede ports are still exposed for each application. That's on purpose as this is a learning experiment so it's obvious what ports each application requires.
 
 I love HAProxy and I've been using it for a long time. Traefik is my learning experiment. I know it cannot match HAProxy's performance and flexibility but I love to tackle new technologies. And proxy perfomance is not something I worry about on my home setup.
+
+Traefik handles Let's Encrypt certificates for all public domains.
 
 ## PiHole
 A network ad-blocker. It sinkholes DNS queries to ad systems. Love it.
@@ -33,7 +35,7 @@ Samba server
 DLNA server
 ## Plex
 Plex media server. I had to disable transcoding as RPi was struggling. But it handles steaming to my TV just fine
-## Readarr, Lazy Librarian, Calibre, Calibre-web
+## Readarr, LazyLibrarian, Calibre, Calibre-web
 There are multiple application for eBook library management. Choose one that you like most. 
 ## Radarr
 Movie library management
@@ -50,11 +52,9 @@ Torrent client
 This is a backup script to backup docker compose file, all environment settings files and folders that are mounted for configuration to each container. You'll notice that there is a copy and tar used for backup of the files. I use copied files for fast restore and tar files for long term backup to external USB drive. Use one that you like most.
 
 # update-my-pi.sh
-This is my script to update RPi and also all containers. You'll notice I am using "down" to stop and remove all containers. That is on purpose as I had some issues with updating when old continers were not removed. It might have been something temporary but it does not 
+This is my script to update RPi and also all containers. You'll notice I am using "down" to stop and remove all containers. That is on purpose as I had some issues with updating when old continers were not removed. It might have been something temporary but it does not hurt.
 
 # What's next
-## Traefik labels
-A good portion of docker-compose.yaml is used by labels required for Traefik. I plan to move that to dedicated YAML files out of docker-compose.yaml.
 ## Traefik TCP and UDP
 Currently Traefik only handles HTTP/S traffic. I plan to move all traffic (TCP and UDP) to Traefik.
 ## Traefik health checks

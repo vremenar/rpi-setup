@@ -1,0 +1,28 @@
+http:
+  routers:
+    bazarr:
+      service: bazarr
+      rule: "Host(`subtitles.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    bazarr-public:
+      service: bazarr
+      rule: "Host(`subtitles.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    bazarr:
+      loadBalancer:
+        servers:
+          - url: "http://bazarr:6767"
+#        healthcheck:
+#          path: "/health"
+#          port: "6767"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

@@ -1,0 +1,28 @@
+http:
+  routers:
+    heimdall:
+      service: heimdall
+      rule: "Host(`apps.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    heimdall-public:
+      service: heimdall
+      rule: "Host(`apps.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    heimdall:
+      loadBalancer:
+        servers:
+          - url: "http://heimdall:80"
+#        healthcheck:
+#          path: "/health"
+#          port: "80"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

@@ -1,0 +1,28 @@
+http:
+  routers:
+    lazylibrarian:
+      service: lazylibrarian
+      rule: "Host(`ll.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    lazylibrarian-public:
+      service: lazylibrarian
+      rule: "Host(`ll.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    lazylibrarian:
+      loadBalancer:
+        servers:
+          - url: "http://lazylibrarian:5299"
+#        healthcheck:
+#          path: "/health"
+#          port: "5299"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

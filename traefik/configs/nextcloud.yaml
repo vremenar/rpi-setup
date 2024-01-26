@@ -1,0 +1,29 @@
+http:
+  routers:
+    nextcloud:
+      service: nextcloud
+      rule: "Host(`files.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    # PHP is touchy-feelly with aditional domain, be sure to check how to add "trusted_domains" to config.php (Google PHP occ trusted domains docker example)
+    nextcloud-public:
+      service: nextcloud
+      rule: "Host(`files.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    nextcloud:
+      loadBalancer:
+        servers:
+          - url: "http://nextcloud:80"
+#        healthcheck:
+#          path: "/health"
+#          port: "80"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

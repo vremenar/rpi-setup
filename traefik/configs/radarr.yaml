@@ -1,0 +1,28 @@
+http:
+  routers:
+    radarr:
+      service: radarr
+      rule: "Host(`movies.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    radarr-public:
+      service: radarr
+      rule: "Host(`movies.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    radarr:
+      loadBalancer:
+        servers:
+          - url: "http://radarr:7878"
+#        healthcheck:
+#          path: "/health"
+#          port: "7878"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

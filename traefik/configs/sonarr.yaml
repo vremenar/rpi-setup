@@ -1,0 +1,28 @@
+http:
+  routers:
+    sonarr:
+      service: sonarr
+      rule: "Host(`series.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    sonarr-public:
+      service: sonarr
+      rule: "Host(`series.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    sonarr:
+      loadBalancer:
+        servers:
+          - url: "http://sonarr:8989"
+#        healthcheck:
+#          path: "/health"
+#          port: "8989"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"

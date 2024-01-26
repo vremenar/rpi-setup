@@ -1,0 +1,28 @@
+http:
+  routers:
+    plex-web:
+      service: plex-web
+      rule: "Host(`plex.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    plex-web-public:
+      service: plex-web
+      rule: "Host(`plex.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    plex-web:
+      loadBalancer:
+        servers:
+          - url: "http://plex:32400"
+#        healthcheck:
+#          path: "/health"
+#          port: "32400"
+#          interval: "3s"
+#          timeout: "100ms"
+#          scheme: "http"
