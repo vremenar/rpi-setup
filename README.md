@@ -17,6 +17,8 @@ I love HAProxy and I've been using it for a long time. Traefik is my learning ex
 
 Traefik handles Let's Encrypt certificates for all public domains.
 
+All servicees exposed through Traefik have configured health checks.
+
 ## PiHole
 A network ad-blocker. It sinkholes DNS queries to ad systems. Love it.
 ## no-ip2 and Cloudflare-DDNS
@@ -57,8 +59,6 @@ This is my script to update RPi and also all containers. You'll notice I am usin
 # What's next
 ## Traefik TCP and UDP
 Currently Traefik only handles HTTP/S traffic. I plan to move all traffic (TCP and UDP) to Traefik.
-## Traefik health checks
-I have started to play around with traefik service health checks. I'll add that soon
 ## Container health checks
 Some of the container have a health checks included but not all of them. That I plan to add so they can revover and alert me when they fail
 ## Prometheus, alertmanager, Grafana
