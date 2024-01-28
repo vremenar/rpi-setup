@@ -20,9 +20,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://transmission:9091"
-#        healthcheck:
-#          path: "/transmission/web"
-#          port: "9091"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: ""
+          port: "9091"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
