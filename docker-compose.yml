@@ -478,6 +478,10 @@ services:
       - env-general.env
     networks:
       - lan
+    command:
+      - "--docker_only=true"
+      - "--housekeeping_interval=30s"
+      - "--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
