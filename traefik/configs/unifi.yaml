@@ -30,7 +30,7 @@
 #        servers:
 #          - url: "https://unifi:8443"
 #        healthcheck:
-#          path: "/status"
+#          path: ""
 #          port: "8443"
 #          scheme: "https"
 #          interval: "3s"
