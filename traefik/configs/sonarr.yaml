@@ -20,9 +20,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://sonarr:8989"
-#        healthcheck:
-#          path: "/health"
-#          port: "8989"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: ""
+          port: "8989"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
