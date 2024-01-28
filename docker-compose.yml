@@ -34,11 +34,17 @@ services:
       - "--certificatesresolvers.csr.acme.tlschallenge=true"
       - "--certificatesresolvers.csr.acme.email=me@myemail.com" # Change to your email
       - "--certificatesresolvers.csr.acme.storage=/letsencrypt/acme.json"
+      - "--ping"
     volumes:
       - /home/pi/docker/traefik/letsencrypt:/letsencrypt
       - /home/pi/docker/traefik/configs:/configs
       - /var/run/docker.sock:/var/run/docker.sock:ro
     logging: *default-logging
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 10s
+      timeout: 10s
+      retries: 5
     restart: always
   heimdall:
     image: lscr.io/linuxserver/heimdall:latest
