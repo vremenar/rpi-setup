@@ -1,3 +1,10 @@
+# Release Notes
+## v1.2 - Add monitoring
+Add Prometheus, Grafana, Node-exporter, cAdvisor, alertmanager. Raspberry Pi and Docker is monitoried. Enable Prometheus export for Traefik. Included some sample Grafana dashboards for Raspberry Pi, Docker and Traefik.
+
+## v1.1 - Enable Traefik health monitoring
+All services are monitoried with Traefik health monitoring
+
 # My RPi setup
 This is my learning project and something I do when I get all nostalgic about technology. It gives me something technical to work on and to continuosly develop my knowledge.
 
@@ -18,7 +25,8 @@ I love HAProxy and I've been using it for a long time. Traefik is my learning ex
 Traefik handles Let's Encrypt certificates for all public domains.
 
 All servicees exposed through Traefik have configured health checks.
-
+## Prometheus, Grafana, alertmanager, cAdvisor
+Enable monitoring of health of Raspberry Pi, Docker containers and Traefik. Some sample Grafana dashboards are included for Raspberry Pi, Docker and Traefik metrics.
 ## PiHole
 A network ad-blocker. It sinkholes DNS queries to ad systems. Love it.
 ## no-ip2 and Cloudflare-DDNS
@@ -61,8 +69,6 @@ This is my script to update RPi and also all containers. You'll notice I am usin
 Currently Traefik only handles HTTP/S traffic. I plan to move all traffic (TCP and UDP) to Traefik.
 ## Container health checks
 Some of the container have a health checks included but not all of them. That I plan to add so they can revover and alert me when they fail
-## Prometheus, alertmanager, Grafana
-I would love to have a dashboard for monitoring all of the services and RPi. Also to have alertign when something goes wrong. So most likely this will follow soon.
 ## Home Assistant
 I am looking into home automation for some time now. That might be next.
 ## raspotify
