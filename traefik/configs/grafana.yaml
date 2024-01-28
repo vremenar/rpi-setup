@@ -1,0 +1,28 @@
+http:
+  routers:
+    grafana:
+      service: grafana
+      rule: "Host(`grafana.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    grafana-public:
+      service: grafana
+      rule: "Host(`grafana.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    grafana:
+      loadBalancer:
+        servers:
+          - url: "http://grafana:3000"
+        healthcheck:
+          path: ""
+          port: "3000"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"

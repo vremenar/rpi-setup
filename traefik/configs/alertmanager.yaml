@@ -1,0 +1,28 @@
+http:
+  routers:
+    alertmanager:
+      service: alertmanager
+      rule: "Host(`alertmanager.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    alertmanager-public:
+      service: alertmanager
+      rule: "Host(`alertmanager.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    alertmanager:
+      loadBalancer:
+        servers:
+          - url: "http://alertmanager:9093"
+        healthcheck:
+          path: ""
+          port: "9093"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"

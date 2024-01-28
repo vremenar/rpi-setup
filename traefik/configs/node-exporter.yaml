@@ -1,0 +1,28 @@
+http:
+  routers:
+    node-exporter:
+      service: node-exporter
+      rule: "Host(`node-exporter.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    node-exporter-public:
+      service: node-exporter
+      rule: "Host(`node-exporter.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    node-exporter:
+      loadBalancer:
+        servers:
+          - url: "http://node-exporter:9100"
+        healthcheck:
+          path: ""
+          port: "9100"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"

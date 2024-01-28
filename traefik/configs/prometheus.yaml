@@ -1,0 +1,28 @@
+http:
+  routers:
+    prometheus:
+      service: prometheus
+      rule: "Host(`prometheus.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    prometheus-public:
+      service: prometheus
+      rule: "Host(`prometheus.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    prometheus:
+      loadBalancer:
+        servers:
+          - url: "http://prometheus:9090"
+        healthcheck:
+          path: ""
+          port: "9090"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
