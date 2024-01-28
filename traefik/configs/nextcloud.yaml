@@ -21,9 +21,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://nextcloud:80"
-#        healthcheck:
-#          path: "/health"
-#          port: "80"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: ""
+          port: "80"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
