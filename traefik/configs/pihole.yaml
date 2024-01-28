@@ -7,6 +7,7 @@ http:
       entryPoints:
         - "websecure"
       middlewares:
+        - "pihole-redirect"
         - "pihole-admin"
     # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
     pihole-public:
@@ -17,12 +18,17 @@ http:
       entryPoints:
         - "websecure"
       middlewares:
+        - "pihole-redirect"
         - "pihole-admin"
 
   middlewares:
     pihole-admin:
-      addprefix:
-        prefix: "/admin"
+      addPrefix:
+        prefix: /admin
+    pihole-redirect:
+      redirectRegex:
+        regex: /admin/$
+        replacement: /
 
   services:
     pihole-web-interface:
