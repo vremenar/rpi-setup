@@ -20,9 +20,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://lazylibrarian:5299"
-#        healthcheck:
-#          path: "/health"
-#          port: "5299"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: "/health"
+          port: "5299"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
