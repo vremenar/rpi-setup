@@ -20,9 +20,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://calibre-web:8083"
-#        healthcheck:
-#          path: "/health"
-#          port: "8083"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: ""
+          port: "8083"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
