@@ -20,9 +20,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://radarr:7878"
-#        healthcheck:
-#          path: "/health"
-#          port: "7878"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: ""
+          port: "7878"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
