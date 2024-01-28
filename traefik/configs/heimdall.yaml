@@ -20,9 +20,11 @@ http:
       loadBalancer:
         servers:
           - url: "http://heimdall:80"
-#        healthcheck:
-#          path: "/health"
-#          port: "80"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: ""
+          port: "80"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
+          headers:
+            Authorization: Basic YWRtaW46TXlTdHJvbmdQYXNzd29yZAo= # This is admin:MyStrongPassword, be sure to generate your base64 encoded credentials (echo admin:MyStrongPassword | base64) if using basic auth fot this app
