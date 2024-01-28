@@ -20,9 +20,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://plex:32400"
-#        healthcheck:
-#          path: "/health"
-#          port: "32400"
-#          interval: "3s"
-#          timeout: "100ms"
-#          scheme: "http"
+        healthcheck:
+          path: "/identity"
+          port: "32400"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
