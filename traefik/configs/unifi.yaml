@@ -1,37 +1,33 @@
-# Unifi controller does not like reverse proxies. It can be done but it requires aditional knowledge and effort. I got it running but I can't explain the whole configuration so it's not yet here.
-#http:
-#  routers:
-#    unifi:
-#      service: unifi-web-interface
-#      rule: "Host(`unifi.home.local`)"
-#      tls: {}
-#      entryPoints:
-#        - "websecure"
-#      middlewares:
-#        - "unifi-dashboard"
-#    unifi-public:
-#      service: unifi-web-interface
-#      rule: "Host(`unifi.my.domain`)"
-#      tls: 
-#        certresolver: csr
-#      entryPoints:
-#        - "websecure"
-#      middlewares:
-#        - "unifi-dashboard"
-#
-#  middlewares:
-#    unifi-dashboard:
-#      addprefix:
-#        prefix: "/manage/default/dashboard"
-#
-#  services:
-#    unifi-web-interface:
-#      loadBalancer:
-#        servers:
-#          - url: "https://unifi:8443"
-#        healthcheck:
-#          path: ""
-#          port: "8443"
-#          scheme: "https"
-#          interval: "3s"
-#          timeout: "100ms"
+http:
+  routers:
+    unifi:
+      service: unifi
+      rule: "Host(`unifi.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    unifi-public:
+      service: unifi
+      rule: "Host(`unifi.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    unifi:
+      loadBalancer:
+        serversTransport: insecureTransport
+        servers:
+          - url: "https://unifi:8443"
+        healthcheck:
+          path: ""
+          port: "8443"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
+  
+  serversTransports:
+    insecureTransport:
+      insecureSkipVerify: true
