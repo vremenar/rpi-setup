@@ -1,4 +1,6 @@
 # Release Notes
+## v1.3 - Add Portainer
+Added Portainer and Portainer agent enable GUI for Docker management. Also this is I use to be able to quickly fix issues with containers as I do not want to expose SSH.
 ## v1.2 - Add monitoring
 Add Prometheus, Grafana, Node-exporter, cAdvisor, alertmanager. Raspberry Pi and Docker is monitoried. Enable Prometheus export for Traefik. Included some sample Grafana dashboards for Raspberry Pi, Docker and Traefik.
 
@@ -25,6 +27,8 @@ I love HAProxy and I've been using it for a long time. Traefik is my learning ex
 Traefik handles Let's Encrypt certificates for all public domains.
 
 All servicees exposed through Traefik have configured health checks.
+## Portainer
+Portainer is a GUI for management of Docker and part of the RPi.
 ## Prometheus, Grafana, alertmanager, cAdvisor
 Enable monitoring of health of Raspberry Pi, Docker containers and Traefik. Some sample Grafana dashboards are included for Raspberry Pi, Docker and Traefik metrics.
 ## PiHole

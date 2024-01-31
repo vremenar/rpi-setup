@@ -1,0 +1,33 @@
+http:
+  routers:
+    portainer:
+      service: portainer
+      rule: "Host(`portainer.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    portainer-public:
+      service: portainer
+      rule: "Host(`portainer.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    portainer:
+      loadBalancer:
+        serversTransport: insecureTransport
+        servers:
+          - url: "https://portainer:9443"
+        healthcheck:
+          path: ""
+          port: "9443"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
+  
+  serversTransports:
+    insecureTransport:
+      insecureSkipVerify: true
