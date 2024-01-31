@@ -15,6 +15,7 @@ docker-compose pull
 docker-compose down
 docker-compose up -d
 docker system prune -f
+docker volume prune -f
 
 # Remove old logs
 find /var/log/update-my-pi* -type f -mtime +7 -exec rm -f {} \;
