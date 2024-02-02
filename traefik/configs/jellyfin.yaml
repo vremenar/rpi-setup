@@ -1,0 +1,34 @@
+http:
+  routers:
+    jellyfin:
+      service: jellyfin
+      rule: "Host(`jellyfin.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    jellyfin-public:
+      service: jellyfin
+      rule: "Host(`jellyfin.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    jellyfin:
+      loadBalancer:
+        passHostHeader: true
+        serversTransport: insecureTransport
+        servers:
+          - url: "http://jellyfin:8096"
+        healthcheck:
+          path: "/health"
+          port: "8096"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
+  
+  serversTransports:
+    insecureTransport:
+      insecureSkipVerify: true

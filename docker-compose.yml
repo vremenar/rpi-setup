@@ -522,3 +522,21 @@ services:
       - /dev/disk/:/dev/disk:ro
     logging: *default-logging
     restart: always
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    user: "1000:1000"
+    env_file:
+      - env-general.env
+      - env-jellyfin.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/jellyfin/config:/config
+      - /home/pi/docker/jellyfin/cache:/cache
+      - /mnt/usb/downloads/series:/series:z
+      - /mnt/usb/downloads/movies:/movies:z
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging: *default-logging
+    restart: always

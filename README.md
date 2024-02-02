@@ -1,4 +1,6 @@
 # Release Notes
+## v1.4 - Add Jellyfin
+Added Jellyfin as an alternative to Plex. Both Plex and Jellyfin are included so you can choose the application which you prefer.
 ## v1.3 - Add Portainer
 Added Portainer and Portainer agent enable GUI for Docker management. Also this is I use to be able to quickly fix issues with containers as I do not want to expose SSH.
 ## v1.2 - Add monitoring
@@ -49,6 +51,8 @@ Samba server
 DLNA server
 ## Plex
 Plex media server. I had to disable transcoding as RPi was struggling. But it handles steaming to my TV just fine
+## Jellyfin
+Jellyfin media server. An alternative to Plex if you prefer open source software.
 ## Readarr, LazyLibrarian, Calibre, Calibre-web
 There are multiple application for eBook library management. Choose one that you like most. 
 ## Radarr
