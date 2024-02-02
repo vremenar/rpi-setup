@@ -1,5 +1,4 @@
 # Release Notes
-<<<<<<< HEAD
 ## v1.4 - Add Jellyfin
 Added Jellyfin as an alternative to Plex. Both Plex and Jellyfin are included so you can choose the application which you prefer.
 ## v1.3 - Add Portainer
@@ -10,14 +9,6 @@ Add Prometheus, Grafana, Node-exporter, cAdvisor, alertmanager. Raspberry Pi and
 ## v1.1 - Enable Traefik health monitoring
 All services are monitoried with Traefik health monitoring
 
-=======
-## v1.3: Add Portainer
-Added Portainer and Portainer agent enable GUI for Docker management. Also, this is how I am able to quickly fix issues with containers without exposing SSH.
-## v1.2: Add monitoring
-Add Prometheus, Grafana, Node-exporter, cAdvisor, and alertmanager. Raspberry Pi and Docker are monitored. Enable Prometheus export for Traefik. Included are some sample Grafana dashboards for Raspberry Pi, Docker, and Traefik.
-## v1.1: Enable Traefik health monitoring
-All services are monitored with Traefik health monitoring.
->>>>>>> e1106d83d06ebc41b7da23063d087d065c687a78
 # My RPi setup
 This is my learning project and something I do when I get all nostalgic about technology. It gives me something technical to work on and to continuously develop my knowledge.
 It is a project to run in containers in my home system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.1 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
@@ -51,13 +42,9 @@ Samba server
 ## miniDLNA
 DLNA server
 ## Plex
-<<<<<<< HEAD
 Plex media server. I had to disable transcoding as RPi was struggling. But it handles steaming to my TV just fine
 ## Jellyfin
 Jellyfin media server. An alternative to Plex if you prefer open source software.
-=======
-Plex media server. I had to disable transcoding as RPi was struggling. But it handles steaming on my TV just fine.
->>>>>>> e1106d83d06ebc41b7da23063d087d065c687a78
 ## Readarr, LazyLibrarian, Calibre, Calibre-web
 There are multiple applications for eBook library management. Choose one that you like most.
 ## Radarr
