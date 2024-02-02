@@ -485,6 +485,7 @@ services:
       - '--storage.path=/alertmanager'
     volumes:
       - /home/pi/docker/alertmanager:/etc/alertmanager/
+      - /home/pi/docker/alertmanager/data:/alertmanager
     logging: *default-logging
     restart: always
   grafana:
