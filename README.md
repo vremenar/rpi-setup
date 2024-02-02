@@ -72,5 +72,5 @@ I have been looking into home automation for some time now. That might be next.
 raspotify is not in the Docker container. Raspotify is a Spotify Connect client. It requires low-level access to the HDMI port. Currently, it's installed on my RPi. Some had success running it in containers, but I haven't yet gotten to that.
 ## Kubernetes
 I might move this whole project to K0s or K3s. But that will be a new git repo.
-build-my-pi.sh
+## build-my-pi.sh
 Something I am working on. This bash script is meant to build RPi from scratch to full operating mode. I do not have a spare RPi 4 to test it, and I don't feel like building everything from scratch.
