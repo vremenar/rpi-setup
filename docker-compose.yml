@@ -13,7 +13,7 @@ services:
     image: traefik:latest
     container_name: traefik
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     ports:
@@ -55,7 +55,7 @@ services:
     depends_on:
       - portainer-agent
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     ports:
@@ -70,7 +70,7 @@ services:
     container_name: portainer-agent
     image: portainer/agent
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     environment:
@@ -85,7 +85,7 @@ services:
     image: lscr.io/linuxserver/heimdall:latest
     container_name: heimdall
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -97,7 +97,7 @@ services:
     container_name: cloudflare-ddns
     network_mode: host # No ports are exposed, but it has to use host networking to get public IP
     env_file:
-      - env-general.env
+      - env/env-general.env
     volumes:
       - /home/pi/docker/cloudflare-ddns/config.json:/config.json # Check Cloudflare documentation how to create a custom config.json
     logging: *default-logging
@@ -107,7 +107,7 @@ services:
     container_name: no-ip2 # No ports are exposed, but it has to use host networking to get public IP
     network_mode: host
     env_file:
-      - env-general.env
+      - env/env-general.env
     volumes:
       - /home/pi/docker/no-ip2/no-ip2.conf:/usr/local/etc/no-ip2.conf # Check no-ip2 documentation how to create a custom no-ip2.conf
     logging: *default-logging
@@ -125,8 +125,8 @@ services:
       - 127.0.0.1
       - 8.8.8.8
     env_file:
-      - env-general.env
-      - env-pihole.env
+      - env/env-general.env
+      - env/env-pihole.env
     volumes:
       - /home/pi/docker/pihole:/etc/pihole
       - /home/pi/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
@@ -138,7 +138,7 @@ services:
     container_name: mongodb-unifi
     image: mongo:4.1
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -152,8 +152,8 @@ services:
     depends_on:
       - mongodb
     env_file:
-      - env-general.env
-      - env-unifi.env
+      - env/env-general.env
+      - env/env-unifi.env
     networks:
       - lan
     ports: # Do not change any port mappings as Unifi devices are using if for adoption process
@@ -180,8 +180,8 @@ services:
     container_name: minidlna
     image: vladgh/minidlna:latest
     env_file:
-      - env-general.env
-      - env-minidlna.env
+      - env/env-general.env
+      - env/env-minidlna.env
     network_mode: 'host'
     volumes:
       - /mnt/usb/downloads/movies:/movies:z
@@ -192,8 +192,8 @@ services:
     image: lscr.io/linuxserver/transmission:latest
     container_name: transmission
     env_file:
-      - env-general.env
-      - env-transmission.env
+      - env/env-general.env
+      - env/env-transmission.env
     volumes:
       - /home/pi/docker/transmission/config:/config
       - /home/pi/docker/transmission/ui/tranmissionic:/ui # Be sure to download and unpack Transmissionic UI to this location
@@ -214,8 +214,8 @@ services:
     image: mariadb:latest
     container_name: mariadb-nextcloud
     env_file:
-      - env-general.env
-      - env-mariadb-nextcloud.env
+      - env/env-general.env
+      - env/env-mariadb-nextcloud.env
     command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
     networks:
       - lan
@@ -227,7 +227,7 @@ services:
     container_name: redis-nextcloud
     image: redis:latest
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
@@ -242,8 +242,8 @@ services:
       - mariadb-nextcloud
       - redis-nextcloud
     env_file:
-      - env-general.env
-      - env-nextcloud.env
+      - env/env-general.env
+      - env/env-nextcloud.env
     networks:
       - lan
     volumes:
@@ -255,8 +255,8 @@ services:
     container_name: samba
     image: dperson/samba:latest
     env_file:
-      - env-general.env
-      - env-samba.env
+      - env/env-general.env
+      - env/env-samba.env
     networks:
       - lan
     ports:
@@ -281,8 +281,8 @@ services:
     container_name: ftps
     image: chonjay21/ftps:latest
     env_file:
-      - env-general.env
-      - env-ftps.env
+      - env/env-general.env
+      - env/env-ftps.env
     networks:
       - lan
     ports:
@@ -301,8 +301,8 @@ services:
     container_name: calibre-web
     image: lscr.io/linuxserver/calibre-web:latest
     env_file:
-      - env-general.env
-      - env-calibre-web.env
+      - env/env-general.env
+      - env/env-calibre-web.env
     networks:
       - lan
     volumes:
@@ -314,8 +314,8 @@ services:
     image: lscr.io/linuxserver/calibre:latest
     container_name: calibre
     env_file:
-      - env-general.env
-      - env-calibre.env
+      - env/env-general.env
+      - env/env-calibre.env
     networks:
       - lan
     ports:
@@ -334,7 +334,7 @@ services:
       - prowlarr
       - transmission
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
        - lan
     volumes:
@@ -349,7 +349,7 @@ services:
       - prowlarr
       - transmission
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -364,7 +364,7 @@ services:
       - prowlarr
       - transmission
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -379,7 +379,7 @@ services:
       - prowlarr
       - transmission
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -391,7 +391,7 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -402,7 +402,7 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     volumes:
@@ -414,8 +414,8 @@ services:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
     env_file:
-      - env-general.env
-      - env-plex.env
+      - env/env-general.env
+      - env/env-plex.env
     networks:
       - lan
     ports:
@@ -440,7 +440,7 @@ services:
     image: prom/prometheus:latest
     user: "1000:1000"
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     command:
@@ -457,7 +457,7 @@ services:
     container_name: node-exporter
     image: quay.io/prometheus/node-exporter:latest
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     command: 
@@ -477,7 +477,7 @@ services:
     container_name: alertmanager
     image: prom/alertmanager:latest
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     command:
@@ -492,8 +492,8 @@ services:
     image: grafana/grafana:latest
     user: "1000:1000"
     env_file:
-      - env-general.env
-      - env-grafana.env
+      - env/env-general.env
+      - env/env-grafana.env
     depends_on:
       - prometheus
     networks:
@@ -507,7 +507,7 @@ services:
     container_name: cadvisor
     image: zcube/cadvisor:latest
     env_file:
-      - env-general.env
+      - env/env-general.env
     networks:
       - lan
     command:
@@ -527,8 +527,8 @@ services:
     container_name: jellyfin
     user: "1000:1000"
     env_file:
-      - env-general.env
-      - env-jellyfin.env
+      - env/env-general.env
+      - env/env-jellyfin.env
     networks:
       - lan
     volumes:
