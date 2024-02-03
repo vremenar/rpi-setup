@@ -541,3 +541,21 @@ services:
       - "host.docker.internal:host-gateway"
     logging: *default-logging
     restart: always
+  filebrowser:
+    container_name: filebrowser
+    image: hurlenko/filebrowser:latest
+    user: "1000:1000"
+    env_file:
+      - env/env-general.env
+      - env/env-filebrowser.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/filebrowser:/config
+      - /mnt/usb/downloads/movies:/data/movies:z
+      - /mnt/usb/downloads/series:/data/series:z
+      - /mnt/usb/downloads/books:/data/books:z
+      - /mnt/usb/downloads/audiobooks:/data/audiobooks:z
+      - /mnt/usb/downloads:/data/all:z
+    logging: *default-logging
+    restart: always

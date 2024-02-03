@@ -1,4 +1,6 @@
 # Release Notes
+## v1.5 - Add Filebrowser
+Added a File Browser app. A lightweight alternative to NextCloud. If you need a simple file sharing access through web interface, this is the right app. As always, I haven't removed NextCloud so you can pick and choose the one you like most.
 ## v1.4 - Add Jellyfin
 Added Jellyfin as an alternative to Plex. Both Plex and Jellyfin are included so you can choose the application which you prefer.
 ## v1.3 - Add Portainer
@@ -39,6 +41,8 @@ Personal file cloud. MySQL and Redis setups are included.
 FTP server
 ## Samba
 Samba server
+## File Browser
+Small and lightweight web application to browse your files. If FTP and Samba are too technical and NextCloud is an overkill this might be the solution you are looking for.
 ## miniDLNA
 DLNA server
 ## Plex

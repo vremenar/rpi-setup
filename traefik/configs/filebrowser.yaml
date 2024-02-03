@@ -1,0 +1,33 @@
+http:
+  routers:
+    filebrowser:
+      service: filebrowser
+      rule: "Host(`files.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet
+    filebrowser-public:
+      service: filebrowser
+      rule: "Host(`files.my.domain`)"
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    filebrowser:
+      loadBalancer:
+        serversTransport: insecureTransport
+        servers:
+          - url: "http://filebrowser:8080"
+        healthcheck:
+          path: "/health"
+          port: "8080"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"
+  
+  serversTransports:
+    insecureTransport:
+      insecureSkipVerify: true
