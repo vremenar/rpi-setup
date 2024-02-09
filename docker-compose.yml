@@ -136,7 +136,7 @@ services:
     restart: always
   mongodb-unifi:
     container_name: mongodb-unifi
-    image: arm64v8/mongo:4.4.19
+    image: arm64v8/mongo:4.4.18
     env_file:
       - env/env-general.env
     networks:
