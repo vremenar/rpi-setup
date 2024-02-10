@@ -22,7 +22,7 @@ http:
         servers:
           - url: "https://unifi:8443"
         healthcheck:
-          path: ""
+          path: "/"
           port: "8443"
           scheme: "http"
           interval: "3s"

@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://heimdall:80"
         healthcheck:
-          path: ""
+          path: "/"
           port: "80"
           scheme: "http"
           interval: "3s"

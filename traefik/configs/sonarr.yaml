@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://sonarr:8989"
         healthcheck:
-          path: ""
+          path: "/ping"
           port: "8989"
           scheme: "http"
           interval: "3s"

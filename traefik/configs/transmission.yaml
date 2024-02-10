@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://transmission:9091"
         healthcheck:
-          path: ""
+          path: "/"
           port: "9091"
           scheme: "http"
           interval: "3s"

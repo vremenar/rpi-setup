@@ -22,7 +22,7 @@ http:
         servers:
           - url: "https://portainer:9443"
         healthcheck:
-          path: ""
+          path: "/api/system/status"
           port: "9443"
           scheme: "http"
           interval: "3s"

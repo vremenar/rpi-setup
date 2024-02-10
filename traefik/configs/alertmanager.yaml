@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://alertmanager:9093"
         healthcheck:
-          path: ""
+          path: "/-/ready"
           port: "9093"
           scheme: "http"
           interval: "3s"

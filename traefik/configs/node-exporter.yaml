@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://node-exporter:9100"
         healthcheck:
-          path: ""
+          path: "/-/healthy"
           port: "9100"
           scheme: "http"
           interval: "3s"

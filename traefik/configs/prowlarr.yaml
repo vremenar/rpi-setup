@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://prowlarr:9696"
         healthcheck:
-          path: ""
+          path: "/ping"
           scheme: "http"
           port: "9696"
           interval: "3s"

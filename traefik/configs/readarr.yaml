@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://readarr:8787"
         healthcheck:
-          path: ""
+          path: "/ping"
           port: "8787"
           scheme: "http"
           interval: "3s"

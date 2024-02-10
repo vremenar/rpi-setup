@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://radarr:7878"
         healthcheck:
-          path: ""
+          path: "/ping"
           port: "7878"
           scheme: "http"
           interval: "3s"

@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://calibre-web:8083"
         healthcheck:
-          path: ""
+          path: "/"
           port: "8083"
           scheme: "http"
           interval: "3s"

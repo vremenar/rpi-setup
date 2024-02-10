@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://grafana:3000"
         healthcheck:
-          path: ""
+          path: "/api/health"
           port: "3000"
           scheme: "http"
           interval: "3s"

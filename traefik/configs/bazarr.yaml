@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://bazarr:6767"
         healthcheck:
-          path: ""
+          path: "/system/status"
           port: "6767"
           scheme: "http"
           interval: "3s"

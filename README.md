@@ -1,4 +1,6 @@
 # Release Notes
+## v1.6 - Health checks
+All containers and Traefik services have a running health checks. For me it is enough to have a health check probe for every 300 seconds. If that is too much for you, you can always change it in the docker-compose.yaml file.
 ## v1.5 - Add Filebrowser
 Added a File Browser app. A lightweight alternative to NextCloud. If you need a simple file sharing access through web interface, this is the right app. As always, I haven't removed NextCloud so you can pick and choose the one you like most.
 ## v1.4 - Add Jellyfin
@@ -68,8 +70,6 @@ This is my script to update RPi and all containers. You'll notice I am using "do
 # What's next
 ## Traefik TCP and UDP
 Currently, Traefik only handles HTTP/S traffic. I plan to move all traffic (TCP and UDP) to Traefik.
-## Container health checks
-Some of the containers have health checks included, but not all of them. That I plan to add so they can revover and alert me when they fail.
 ## Home Assistant
 I have been looking into home automation for some time now. That might be next.
 ## raspotify

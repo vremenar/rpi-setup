@@ -65,6 +65,11 @@ services:
       - /home/pi/docker/portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9000/api/system/status"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
     restart: always
   portainer-agent:
     container_name: portainer-agent
@@ -80,6 +85,11 @@ services:
       - /var/lib/docker/volumes:/var/lib/docker/volumes
       - /:/host
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "--no-check-certificate", "https://localhost:9001/ping"]
+      interval: 300s
+      timeout: 10s
+      retries: 5
     restart: always
   heimdall:
     image: lscr.io/linuxserver/heimdall:latest
@@ -91,6 +101,11 @@ services:
     volumes:
       - /home/pi/docker/heimdall:/config
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   cloudflare-ddns:
     image: timothyjmiller/cloudflare-ddns:latest
@@ -101,6 +116,11 @@ services:
     volumes:
       - /home/pi/docker/cloudflare-ddns/config.json:/config.json # Check Cloudflare documentation how to create a custom config.json
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "python", "--version"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   no-ip2:
     image: romeupalos/noip:alpine3.16.2-2.1.9-1-arm64v8
@@ -111,6 +131,11 @@ services:
     volumes:
       - /home/pi/docker/no-ip2/no-ip2.conf:/usr/local/etc/no-ip2.conf # Check no-ip2 documentation how to create a custom no-ip2.conf
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "noip2", "-h"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   pihole:
     container_name: pihole
@@ -145,6 +170,11 @@ services:
       - /home/pi/docker/mongodb/unifi:/data/db
       - /home/pi/docker/mongodb/unifi/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro # Check Unifi documentation if you need custom database init, Unifi setup is provided in my repo
     logging: *default-logging
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongodb-unifi:27017/unifi --quiet
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   unifi:
     container_name: unifi
@@ -175,6 +205,11 @@ services:
       - /home/pi/docker/unifi/work:/usr/lib/unifi/work
       - /home/pi/docker/unifi/cert:/unifi/cert
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8443"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   minidlna:
     container_name: minidlna
@@ -209,6 +244,11 @@ services:
       - "61833:61833" # Make sure it is the same as PEERPORT environment variable value
       - "61833:61833/udp" # Make sure it is the same as PEERPORT environment variable value
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://user:MyStrongPassword@localhost:9091/"] # Be sure the change the credentials based on what you have setup for RPC
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   mariadb-nextcloud:
     image: mariadb:latest
@@ -222,6 +262,11 @@ services:
     volumes:
       - /home/pi/docker/mysql/nextcloud:/var/lib/mysql
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--wait", "--try=3", "--interval=10s"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   redis-nextcloud:
     container_name: redis-nextcloud
@@ -234,6 +279,11 @@ services:
     volumes:
       - /home/pi/docker/redis/nextcloud:/data
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   nextcloud:
     container_name: nextcloud
@@ -250,6 +300,11 @@ services:
       - /home/pi/docker/nextcloud:/var/www/html
       - /mnt/usb/nextcloud:/var/www/html/data
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always 
   samba:
     container_name: samba
@@ -296,6 +351,11 @@ services:
       - /mnt/usb/downloads:/home/vsftpd/data/downloads:z
       - /mnt/usb/backup:/home/vsftpd/data/backup
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "21"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   calibre-web:
     container_name: calibre-web
@@ -309,6 +369,11 @@ services:
       - /home/pi/docker/calibre-web:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8083"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   calibre:
     image: lscr.io/linuxserver/calibre:latest
@@ -326,6 +391,11 @@ services:
       - /home/pi/docker/calibre:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:2688"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   lazylibrarian:
     image: lscr.io/linuxserver/lazylibrarian:latest
@@ -341,6 +411,11 @@ services:
       - /home/pi/docker/lazylibrarian:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:5299/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   readarr:
     image: lscr.io/linuxserver/readarr:nightly
@@ -356,6 +431,11 @@ services:
       - /home/pi/docker/readarr:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8787/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -371,6 +451,11 @@ services:
       - /home/pi/docker/radarr:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:7878/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -386,6 +471,11 @@ services:
       - /home/pi/docker/sonarr:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8989/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -397,6 +487,11 @@ services:
     volumes:
       - /home/pi/docker/prowlarr:/config
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9696/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -409,6 +504,11 @@ services:
       - /home/pi/docker/bazarr:/config
       - /mnt/usb/downloads:/downloads:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:6767/system/status"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   plex:
     image: lscr.io/linuxserver/plex:latest
@@ -434,6 +534,11 @@ services:
       - /mnt/usb/downloads/series:/series:z
       - /mnt/usb/downloads/movies:/movies:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:32400/identity"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   prometheus:
     container_name: prometheus
@@ -452,6 +557,11 @@ services:
       - /home/pi/docker/prometheus/config:/etc/prometheus/
       - /home/pi/docker/prometheus/data:/prometheus
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   node-exporter:
     container_name: node-exporter
@@ -472,6 +582,11 @@ services:
       - /:/rootfs:ro
       - /:/host:ro,rslave
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9100/-/healthy"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   alertmanager:
     container_name: alertmanager
@@ -487,6 +602,11 @@ services:
       - /home/pi/docker/alertmanager:/etc/alertmanager/
       - /home/pi/docker/alertmanager/data:/alertmanager
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9093/-/ready"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   grafana:
     container_name: grafana
@@ -503,6 +623,11 @@ services:
       - /home/pi/docker/grafana/data:/var/lib/grafana
       - /home/pi/docker/grafana/provisioning/:/etc/grafana/provisioning/
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   cadvisor:
     container_name: cadvisor
@@ -522,6 +647,11 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -540,6 +670,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8096/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always
   filebrowser:
     container_name: filebrowser
@@ -558,4 +693,9 @@ services:
       - /mnt/usb/downloads/audiobooks:/data/audiobooks:z
       - /mnt/usb/downloads:/data/all:z
     logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
     restart: always

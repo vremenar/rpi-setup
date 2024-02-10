@@ -21,7 +21,7 @@ http:
         servers:
           - url: "http://prometheus:9090"
         healthcheck:
-          path: ""
+          path: "/-/healthy"
           port: "9090"
           scheme: "http"
           interval: "3s"
