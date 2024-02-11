@@ -1,4 +1,6 @@
 # Release Notes
+## v1.7 - Add SFTPGo
+Added SFTPgo as a replacement for FTPS and File Broswer. SFTPGo includes FTP/S, SFTP, WebDAV and web GUI. Defender tool is enabled which protects the app from brute forcing. Also, Prometheus metrics are enabled and Prometheus is configued to scrape the metrics.
 ## v1.6 - Health checks
 All containers and Traefik services have a running health checks. For me it is enough to have a health check probe for every 300 seconds. If that is too much for you, you can always change it in the docker-compose.yaml file.
 ## v1.5 - Add Filebrowser
