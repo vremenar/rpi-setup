@@ -1,3 +1,8 @@
+# Ultimate media home server for Rasberry Pi
+This is my learning project and something I do when I get all nostalgic about technology. It gives me something technical to work on and to continuously develop my knowledge.
+It is a project to run containers in my home media server system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.4 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
+The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
+
 # Release Notes
 ## v1.7 - Add SFTPGo
 Added SFTPgo as a replacement for FTPS and File Broswer. SFTPGo includes FTP/S, SFTP, WebDAV and web GUI. Defender tool is enabled which protects the app from brute forcing. Also, Prometheus metrics are enabled and Prometheus is configued to scrape the metrics.
@@ -15,10 +20,6 @@ Add Prometheus, Grafana, Node-exporter, cAdvisor, alertmanager. Raspberry Pi and
 ## v1.1 - Enable Traefik health monitoring
 All services are monitoried with Traefik health monitoring
 
-# My RPi setup
-This is my learning project and something I do when I get all nostalgic about technology. It gives me something technical to work on and to continuously develop my knowledge.
-It is a project to run in containers in my home system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.1 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
-The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
 # Why Docker
 It makes my life much easier. It makes management and updating of the application so much easier and more effective. And it doesn't blot my RPi. Also, you can find a "backup-my-pi.sh" script that will backup everything and make restoring a new RPi a breeze.
 # Applications
@@ -41,6 +42,8 @@ One beautiful interface to access all my applications.
 As I have Ubiquity devices on my home network, a Ubiquity controller is a must for me. The unifi controller is not handled by Traefik. Unifi is finicky with reverse proxies. I did manage to get it running, but I cannot fully explain all the settings yet, so I haven't included that setup. MongoDB is included.
 ## Nextcloud
 Personal file cloud. MySQL and Redis setups are included.
+## SFTPGo
+This is a FTP/S, SFTP, WebDAV and Web GUI system. It has a anti brute forcing protection (Defender) and can expose Prometheus metrics.
 ## FTPS
 FTP server
 ## Samba
