@@ -1,0 +1,134 @@
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    user: "1000:1000"
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    volumes:
+      - /home/pi/docker/prometheus/config:/etc/prometheus/
+      - /home/pi/docker/prometheus/data:/prometheus
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  node-exporter:
+    container_name: node-exporter
+    image: quay.io/prometheus/node-exporter:latest
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    command: 
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9100/-/healthy"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  alertmanager:
+    container_name: alertmanager
+    image: prom/alertmanager:latest
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    command:
+      - '--config.file=/etc/alertmanager/config.yaml'
+      - '--storage.path=/alertmanager'
+    volumes:
+      - /home/pi/docker/alertmanager:/etc/alertmanager/
+      - /home/pi/docker/alertmanager/data:/alertmanager
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9093/-/ready"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    user: "1000:1000"
+    env_file:
+      - env/env-general.env
+      - env/env-grafana.env
+    depends_on:
+      - prometheus
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/grafana/data:/var/lib/grafana
+      - /home/pi/docker/grafana/provisioning/:/etc/grafana/provisioning/
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  cadvisor:
+    container_name: cadvisor
+    image: zcube/cadvisor:latest
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    command:
+      - "--docker_only=true"
+      - "--housekeeping_interval=30s"
+      - "--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

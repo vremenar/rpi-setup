@@ -1,0 +1,30 @@
+services:
+  ftps:
+    container_name: ftps
+    image: chonjay21/ftps:latest
+    env_file:
+      - env/env-general.env
+      - env/env-ftps.env
+    networks:
+      - lan
+    ports:
+      - "2621:21"
+      - "60000-60010:60000-60010"
+    volumes:
+      - /mnt/usb/downloads/movies:/home/vsftpd/data/movies:z
+      - /mnt/usb/downloads/series:/home/vsftpd/data/series:z
+      - /mnt/usb/downloads/books:/home/vsftpd/data/books:z
+      - /mnt/usb/downloads/audiobooks:/home/vsftpd/data/audiobooks:z
+      - /mnt/usb/downloads:/home/vsftpd/data/downloads:z
+      - /mnt/usb/backup:/home/vsftpd/data/backup
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "21"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

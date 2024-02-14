@@ -1,0 +1,21 @@
+services:
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/heimdall:/config
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

@@ -1,0 +1,25 @@
+services:  
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/sonarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8989/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

@@ -1,0 +1,25 @@
+services:  
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: lazylibrarian
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/lazylibrarian:/config
+      - /mnt/usb/downloads:/downloads:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:5299/health"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

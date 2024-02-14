@@ -1,0 +1,61 @@
+services:
+  mongodb-unifi:
+    container_name: mongodb-unifi
+    image: arm64v8/mongo:4.4.18
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/mongodb/unifi:/data/db
+      - /home/pi/docker/mongodb/unifi/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro # Check Unifi documentation if you need custom database init, Unifi setup is provided in my repo
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongodb-unifi:27017/unifi --quiet
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  unifi:
+    container_name: unifi
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    depends_on:
+      - mongodb
+    env_file:
+      - env/env-general.env
+      - env/env-unifi.env
+    networks:
+      - lan
+    ports: # Do not change any port mappings as Unifi devices are using if for adoption process
+      - "8443:8443"
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "8080:8080"
+      #- "1900:1900/udp" # UPnP port, used by MiniDLNA. Enable it to have an option for direct connection. If you need Unifi Cloud connection aditional 443/TCP is required.
+      - "8843:8843"
+      - "8880:8880"
+      - "6789:6789"
+      - "5514:5514/udp"
+    volumes:
+      - /home/pi/docker/unifi/config:/config
+      - /home/pi/docker/unifi/log:/usr/lib/unifi/logs
+      - /home/pi/docker/unifi/log2:/var/log/unifi
+      - /home/pi/docker/unifi/run:/usr/lib/unifi/run
+      - /home/pi/docker/unifi/run2:/run/unifi
+      - /home/pi/docker/unifi/work:/usr/lib/unifi/work
+      - /home/pi/docker/unifi/cert:/unifi/cert
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:8443"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

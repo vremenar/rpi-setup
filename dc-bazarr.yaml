@@ -1,0 +1,22 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/bazarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:6767/system/status"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

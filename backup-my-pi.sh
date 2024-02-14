@@ -6,7 +6,7 @@ echo -e "[$(date +%x-%X)] Backup starting" | tee -a "/var/log/backup-my-pi-$(dat
 # Stop Docker for consistency
 echo -e "[$(date +%x-%X)] Stoping Docker containers"
 cd /home/pi/docker
-docker-compose stop
+docker compose stop
 
 # Set folders
 BACKUP_DIR="/mnt/backup"
@@ -48,7 +48,7 @@ find /mnt/backup/crontabs/* -ctime +6 -exec rm -rf {} \;
 # Start Docker for consistency
 echo -e "[$(date +%x-%X)] Starting Docker containers"
 cd /home/pi/docker
-docker-compose up -d
+docker compose up -d
 
 # Remove old logs
 find /var/log/backup-my-pi* -type f -mtime +7 -exec rm -f {} \;

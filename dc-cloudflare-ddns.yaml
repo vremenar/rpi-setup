@@ -1,0 +1,20 @@
+services:  
+  cloudflare-ddns:
+    image: timothyjmiller/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    network_mode: host # No ports are exposed, but it has to use host networking to get public IP
+    env_file:
+      - env/env-general.env
+    volumes:
+      - /home/pi/docker/cloudflare-ddns/config.json:/config.json # Check Cloudflare documentation how to create a custom config.json
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "python", "--version"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

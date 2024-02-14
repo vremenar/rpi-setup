@@ -11,9 +11,9 @@ apt autoremove -y
 # Do Docker images update
 echo "[$(date +%x-%X)] Docker update starting"
 cd /home/pi/docker
-docker-compose pull
-docker-compose down
-docker-compose up -d
+docker compose pull
+docker compose down
+docker compose up -d
 docker system prune -f
 docker volume prune -f
 

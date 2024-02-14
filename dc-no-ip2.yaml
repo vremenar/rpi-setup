@@ -1,0 +1,20 @@
+services:
+  no-ip2:
+    image: romeupalos/noip:alpine3.16.2-2.1.9-1-arm64v8
+    container_name: no-ip2 # No ports are exposed, but it has to use host networking to get public IP
+    network_mode: host
+    env_file:
+      - env/env-general.env
+    volumes:
+      - /home/pi/docker/no-ip2/no-ip2.conf:/usr/local/etc/no-ip2.conf # Check no-ip2 documentation how to create a custom no-ip2.conf
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "noip2", "-h"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

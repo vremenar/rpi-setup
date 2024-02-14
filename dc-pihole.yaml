@@ -1,0 +1,27 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    networks:
+      - lan
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+    env_file:
+      - env/env-general.env
+      - env/env-pihole.env
+    volumes:
+      - /home/pi/docker/pihole:/etc/pihole
+      - /home/pi/docker/pihole/dnsmasq.d:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    restart: always

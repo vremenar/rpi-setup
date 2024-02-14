@@ -1,0 +1,25 @@
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/radarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:7878/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

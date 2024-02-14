@@ -1,0 +1,35 @@
+services:  
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    env_file:
+      - env/env-general.env
+      - env/env-plex.env
+    networks:
+      - lan
+    ports:
+      - "2696:9696"
+      - "32400:32400"
+      #- "1900:1900/udp" # UPnP port, enable this or unifi or minidlna
+      #- "5353:5353/udp" # UPnP port, enable this or unifi or minidlna
+      - "8324:8324"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
+      - "32469:32469"
+    volumes:
+      - /home/pi/docker/plex:/config
+      - /mnt/usb/downloads/series:/series:z
+      - /mnt/usb/downloads/movies:/movies:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:32400/identity"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

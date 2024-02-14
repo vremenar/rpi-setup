@@ -1,0 +1,32 @@
+services:  
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    env_file:
+      - env/env-general.env
+      - env/env-transmission.env
+    volumes:
+      - /home/pi/docker/transmission/config:/config
+      - /home/pi/docker/transmission/ui/tranmissionic:/ui # Be sure to download and unpack Transmissionic UI to this location
+      - /mnt/usb/downloads:/downloads:z
+      - /mnt/usb/watch:/watch
+      - /mnt/usb/incomplete:/incomplete
+    networks:
+      - lan
+    ports:
+      - "9091:9091"
+      - "51413:51413"
+      - "51413:51413/udp"
+      - "61833:61833" # Make sure it is the same as PEERPORT environment variable value
+      - "61833:61833/udp" # Make sure it is the same as PEERPORT environment variable value
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://user:MyStrongPassword@localhost:9091/"] # Be sure the change the credentials based on what you have setup for RPC
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

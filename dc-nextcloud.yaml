@@ -1,0 +1,69 @@
+services:
+  mariadb-nextcloud:
+    image: mariadb:latest
+    container_name: mariadb-nextcloud
+    env_file:
+      - env/env-general.env
+      - env/env-mariadb-nextcloud.env
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/mysql/nextcloud:/var/lib/mysql
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--wait", "--try=3", "--interval=10s"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  redis-nextcloud:
+    container_name: redis-nextcloud
+    image: redis:latest
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - /home/pi/docker/redis/nextcloud:/data
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always
+  nextcloud:
+    container_name: nextcloud
+    image: nextcloud:latest
+    depends_on:
+      - mariadb-nextcloud
+      - redis-nextcloud
+    env_file:
+      - env/env-general.env
+      - env/env-nextcloud.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/nextcloud:/var/www/html
+      - /mnt/usb/nextcloud:/var/www/html/data
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

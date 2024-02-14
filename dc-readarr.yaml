@@ -1,0 +1,25 @@
+services:
+  readarr:
+    image: lscr.io/linuxserver/readarr:nightly
+    container_name: readarr
+    depends_on:
+      - prowlarr
+      - transmission
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/readarr:/config
+      - /mnt/usb/downloads:/downloads:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:8787/ping"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

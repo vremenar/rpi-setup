@@ -1,0 +1,17 @@
+services:  
+  minidlna:
+    container_name: minidlna
+    image: vladgh/minidlna:latest
+    env_file:
+      - env/env-general.env
+      - env/env-minidlna.env
+    network_mode: 'host'
+    volumes:
+      - /mnt/usb/downloads/movies:/movies:z
+      - /mnt/usb/downloads/series:/series:z
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    restart: always
