@@ -59,3 +59,25 @@ services:
       retries: 5
       timeout: 10s
     restart: always
+  unpoller:
+    image: ghcr.io/unpoller/unpoller:latest
+    container_name: unpoller
+    networks:
+      - lan
+    ports:
+      - "9130:9130"
+    environment:
+      - env/env-general.env
+    volumes:
+      - /home/pi/docker/unpoller/up.conf:/etc/unpoller/up.conf:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "unpoller", "--version"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

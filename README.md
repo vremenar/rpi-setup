@@ -3,6 +3,8 @@ This is my learning project and something I do when I get all nostalgic about te
 It is a project to run containers in my home media server system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.4 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
 The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
 # Release Notes
+## v2.1 - Add Unpoller
+Added Unifi Prometheus exporter so you can gater Unifi data into Prometheus, and visaulize them in Grafana. Grafana dashboards can be downloaded from official site (search for Unifi-Poller).
 ## v2.0 - Swicth to Docker Compose
 As the docker-compose.yaml got to more than 700 lines, maintaining it was a pain. I have switched from "docker-compose" to "docker compose" (note the missing minus sign) I can split the master docker-compose.yaml to separate docker compose files (e.g. dc-service.yaml). This makes it easier to maintain te stack and also more flexible to utilize only the services you need. Just comment out or remove items from master "docker-compose.yaml" file from "include" section.
 ## v1.7 - Add SFTPGo
@@ -38,7 +40,7 @@ Dynamic DNS records management. I use [no-ip2](https://github.com/romeupalos/noi
 ## Heimdall
 [Heimdall](https://github.com/linuxserver/Heimdall) is a beautiful interface to access all my applications.
 ## Unifi controller
-As I have Ubiquity devices on my home network, a Ubiquity controller is a must for me. MongoDB is included.
+As I have Ubiquity devices on my home network, a Ubiquity controller is a must for me. MongoDB is included. Included in the package is [Unpoller](https://github.com/unpoller/unpoller) which is a Unifi Prometheus exporter.
 ## Nextcloud
 Personal file cloud. MySQL and Redis setups are included.
 ## SFTPGo

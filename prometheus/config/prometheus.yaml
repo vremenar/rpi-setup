@@ -35,3 +35,7 @@ scrape_configs:
     scrape_interval: 15s
     static_configs:
       - targets: ['sftp:2623']
+  - job_name: 'unpoller'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['unpoller:9130']
