@@ -3,6 +3,8 @@ This is my learning project and something I do when I get all nostalgic about te
 It is a project to run containers in my home media server system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.4 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
 The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
 # Release Notes
+## v2.2 - Add Hue exporter
+Added Philips Hue lights exporter for Prometheus. With this exporter you can get information regarding Hue lights from you home. How to generate your API key is available from [Philips documentation](https://developers.meethue.com/develop/get-started-2/).
 ## v2.1 - Add Unpoller
 Added Unifi Prometheus exporter so you can gater Unifi data into Prometheus, and visaulize them in Grafana. Grafana dashboards can be downloaded from official site (search for Unifi-Poller).
 ## v2.0 - Swicth to Docker Compose
@@ -32,7 +34,8 @@ All services exposed through Traefik have configured health checks.
 ## Portainer
 [Portainer](https://github.com/portainer/portainer) is a GUI for the management of Docker and part of the RPi.
 ## Prometheus, Grafana, AlertManager, and cAdvisor
-Enable monitoring of the health of Raspberry Pi, Docker containers, and Traefik. Some sample Grafana dashboards are included for Raspberry Pi, Docker, and Traefik metrics.
+Enable monitoring of the health of Raspberry Pi, Docker containers, and Traefik. Some sample Grafana dashboards are included for Raspberry Pi, Docker, and Traefik metrics. 
+If you are using Hue lights in your home, hue-exporter for Prometheus is included.
 ## PiHole
 [PiHile](https://github.com/pi-hole/pi-hole) is a network ad-blocker. It sinkholes the DNS queries of ad systems. Love it.
 ## no-ip2 and Cloudflare-DDNS

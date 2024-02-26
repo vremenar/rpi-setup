@@ -39,3 +39,7 @@ scrape_configs:
     scrape_interval: 15s
     static_configs:
       - targets: ['unpoller:9130']
+  - job_name: 'hue'
+    scrape_interval: 90s
+    static_configs:
+      - targets: ['hue-exporter:9366']
