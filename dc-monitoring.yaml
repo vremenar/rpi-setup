@@ -152,3 +152,27 @@ services:
       retries: 5
       timeout: 10s
     restart: always
+  netatmo-exporter:
+    container_name: netatmo-exporter
+    image: vremenar/netatmo-energy-exporter:arm64
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    command:
+      - '--client-id=MyID' # Generate this on Netatmo developer portal
+      - '--client-secret=MySecret' # Generate this on Netatmo developer portal
+      - '--refresh-token=MyRefreshToken' # Generate this on Netatmo developer portal
+      - '--username=MyUserName' # Username for Netatmo service
+      - '--password=MyStrongPassword' # Username for Netatmo service
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:2112/metrics"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

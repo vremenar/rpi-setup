@@ -43,3 +43,7 @@ scrape_configs:
     scrape_interval: 90s
     static_configs:
       - targets: ['hue-exporter:9366']
+  - job_name: 'netatmo'
+    scrape_interval: 90s
+    static_configs:
+      - targets: ['netatmo-exporter:2112']

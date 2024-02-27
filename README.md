@@ -3,6 +3,10 @@ This is my learning project and something I do when I get all nostalgic about te
 It is a project to run containers in my home media server system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.4 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
 The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
 # Release Notes
+## v2.3 - Add Netatmo Energy (Comfort) exporter
+Added Netatmo Energy (Comfort) exporter for Prometheus. This enables monitoring of [Netatmo Smart Thermostat](https://www.netatmo.com/en-eu/smart-thermostat) and Smart Valves. 
+Docker image is available on my [Docker Hub repostitory](https://hub.docker.com/r/vremenar/netatmo-energy-exporter). It is available for x86 and ARM64 platforms. Images are built on great wrok from [tipok](https://github.com/tipok/netatmo_energy_exporter).
+Also, to get you started I have created a simple Grafana Dashboard which can be downloaded from [Grafana Dashboards website](https://grafana.com/grafana/dashboards/20571-netatmo-energy-dashboard/). 
 ## v2.2 - Add Hue exporter
 Added Philips Hue lights exporter for Prometheus. With this exporter you can get information regarding Hue lights from you home. How to generate your API key is available from [Philips documentation](https://developers.meethue.com/develop/get-started-2/).
 ## v2.1 - Add Unpoller
