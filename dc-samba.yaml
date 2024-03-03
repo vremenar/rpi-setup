@@ -1,7 +1,7 @@
 services:  
   samba:
     container_name: samba
-    image: dperson/samba:latest
+    image: vremenar/samba:latest
     env_file:
       - env/env-general.env
       - env/env-samba.env

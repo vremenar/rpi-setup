@@ -1,6 +1,6 @@
 services:
   no-ip2:
-    image: romeupalos/noip:alpine3.16.2-2.1.9-1-arm64v8
+    image: vremenar/no-ip2:latest
     container_name: no-ip2 # No ports are exposed, but it has to use host networking to get public IP
     network_mode: host
     env_file:
