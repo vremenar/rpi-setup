@@ -3,6 +3,8 @@ This is my learning project and something I do when I get all nostalgic about te
 It is a project to run containers in my home media server system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.4 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
 The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
 # Release Notes
+## v2.5 - Add PiHole Prometheus Exporter
+Added Prometheus Exporter for PiHole. It enables gathering of data from PiHole. An Grafana Dashboard is also available.
 ## v2.4 - Switch to my Docker images
 Swithced some of the projects to my Docker images. Some images were not maintained for more than couple of years. That made them vulnerable as base images and packages were out of date. I have forked those projects and updated to latest base images and packages. 
 ## v2.3 - Add Netatmo Energy (Comfort) exporter
