@@ -1,0 +1,28 @@
+http:
+  routers:
+    kuma:
+      service: kuma
+      rule: "Host(`uptime.home.local`)"
+      tls: {}
+      entryPoints:
+        - "websecure"
+    # Public internet routing with Let's Encrypt certificate, delete this is you do not have or want access from public internet. 
+    kuma-public:
+      service: kuma
+      rule: "Host(`uptime.my.domain`)" # Use only subdomain rule as Uptime Kuma does not support suffix routing through proxy
+      tls: 
+        certresolver: csr
+      entryPoints:
+        - "websecure"
+
+  services:
+    kuma:
+      loadBalancer:
+        servers:
+          - url: "http://kuma:3001"
+        healthcheck:
+          path: "/"
+          port: "3001"
+          scheme: "http"
+          interval: "3s"
+          timeout: "100ms"

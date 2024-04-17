@@ -3,6 +3,8 @@ This is my learning project and something I do when I get all nostalgic about te
 It is a project to run containers in my home media server system. From ad-blocking (Pihole) to the digital book library. To run it, you'll need a Raspberry 4 or 5. Anything older will not work, as Mongo 4.4 is not supported on that architecture. Also, you'll need some Docker and Docker Compose knowledge. This application will require 4GB of RAM or more.
 The setup of the applications mentioned here is out of scope. Google them. Behind every application, there is a large and vibrant community willing to help. The documentation is extensive.
 # Release Notes
+## v2.6 - Add Uptime Kuma
+Added [Uptime Kuma](https://github.com/louislam/uptime-kuma), a simple self hosted availability monitoring tool. It enables monitoring of availabilty of HTTP(s) / TCP / HTTP(s) Keyword / HTTP(s) Json Query / Ping / DNS Record / Push / Steam Game Server / Docker Containers. Alertes can be pushed to more than 90 channels.
 ## v2.5 - Add PiHole Prometheus Exporter
 Added Prometheus Exporter for PiHole. It enables gathering of data from PiHole. An Grafana Dashboard is also available.
 ## v2.4 - Switch to my Docker images

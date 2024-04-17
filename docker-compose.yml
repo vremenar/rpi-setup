@@ -28,3 +28,4 @@ include:
   - dc-jellyfin.yaml
   - dc-filebrowser.yaml
   - dc-sftp.yaml
+  - dc-kuma.yaml

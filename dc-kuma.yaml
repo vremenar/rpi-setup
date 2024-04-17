@@ -1,0 +1,21 @@
+services:
+  kuma:
+    image: louislam/uptime-kuma:1
+    container_name: kuma
+    env_file:
+      - env/env-general.env
+    networks:
+      - lan
+    volumes:
+      - /home/pi/docker/kuma:/app/data
+    logging: 
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "http://localhost:3001"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    restart: always

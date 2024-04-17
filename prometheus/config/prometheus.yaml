@@ -47,3 +47,10 @@ scrape_configs:
     scrape_interval: 90s
     static_configs:
       - targets: ['netatmo-exporter:2112']
+  - job_name: 'kuma'
+    scrape_interval: 90s
+    static_configs:
+      - targets: ['kuma:3001']
+    basic_auth:
+      username: 'MyUserName' # Change this to username you set during first Uptime Kuma start
+      password: 'MyStrongPassword' # Change this to password you set during first Uptime Kuma start
